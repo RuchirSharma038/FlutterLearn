@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_4/pages/news_details.dart';
+import 'package:flutter_application_4/pages/profile_page.dart';
+import 'package:flutter_application_4/pages/saved_screen.dart';
+import 'package:flutter_application_4/pages/search_screen.dart';
 //import 'package:flutter_application_4/pages/news_details.dart';
 
 class HomePage extends StatefulWidget {
@@ -169,22 +172,29 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
 
       appBar: AppBar(
+        // centerTitle: true,
         backgroundColor: Colors.white,
-        title: Padding(
-          padding: EdgeInsetsGeometry.only(left: 16.0),
-          child: Text(
-            'NewsApp',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
-            ),
+        title: Text(
+          'NewsApp',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
           ),
         ),
+
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 16.0),
-            child: IconButton(onPressed: () {}, icon: Icon(Icons.person)),
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyProfile()),
+                );
+              },
+              icon: Icon(Icons.person),
+            ),
           ),
         ],
       ),
@@ -224,6 +234,26 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             selectedIndex = index;
           });
+          switch (selectedIndex) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MySearch()),
+              );
+              break;
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MySaved()),
+              );
+              break;
+          }
         },
         backgroundColor: Colors.white,
         selectedItemColor: Colors.black,
