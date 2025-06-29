@@ -14,8 +14,7 @@ class MySaved extends StatefulWidget {
 class _SavedPageState extends State<MySaved> {
   int selectedIndex = 2;
   late Box savedArticlesBox;
-  //final List<Map<String,dynamic>> articles1 = Hive.box('saved_articles').values.toList();
-  //List<Map<String, dynamic>> articles = (List<Map<String,dynamic>>)articles1;
+
   List<Map<String, dynamic>> articles = [];
 
   @override
@@ -99,7 +98,6 @@ class _SavedPageState extends State<MySaved> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    // 'By: ${articles[index]['author']}',
                     articles[index]['author'] == null
                         ? 'By: Unknown'
                         : 'By: ${articles[index]['author']}',

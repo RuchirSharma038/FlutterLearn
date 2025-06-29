@@ -5,6 +5,7 @@ import 'package:flutter_application_4/pages/news_details.dart';
 import 'package:flutter_application_4/pages/profile_page.dart';
 import 'package:flutter_application_4/pages/saved_screen.dart';
 import 'package:flutter_application_4/pages/search_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:flutter_application_4/pages/sports_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,12 +24,13 @@ class _SportsPageState extends State<SportsPage> {
   @override
   void initState() {
     super.initState();
-    fetchArticles(); // Fetch articles when widget initializes
+    fetchArticles();
   }
 
   Future<void> fetchArticles() async {
-    const url =
-        'https://newsapi.org/v2/top-headlines?category=sports&apiKey=4d0e1016613247beb6dcf4dd5f13dec0';
+    String? apiKey = dotenv.env['API_KEY'];
+    final url =
+        'https://newsapi.org/v2/top-headlines?category=sports&apiKey=$apiKey';
     final uri = Uri.parse(url);
     try {
       final response = await http.get(uri);

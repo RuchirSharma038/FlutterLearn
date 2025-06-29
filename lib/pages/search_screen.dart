@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_4/pages/home_page.dart';
 import 'package:flutter_application_4/pages/news_details.dart';
 import 'package:flutter_application_4/pages/saved_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -13,13 +14,12 @@ class MySearch extends StatefulWidget {
 }
 
 class _SearchPageState extends State<MySearch> {
-  //late TextEditingController usernameC;
   String query = '';
   List<Map<String, dynamic>> articles = [];
   int selectedIndex = 1;
-  //bool isLoading = false;
 
   Future<void> fetchArticles() async {
+    String? apiKey = dotenv.env['API_KEY'];
     if (query.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -29,9 +29,7 @@ class _SearchPageState extends State<MySearch> {
 
     try {
       final response = await http.get(
-        Uri.parse(
-          'https://newsapi.org/v2/everything?q=$query&apiKey=4d0e1016613247beb6dcf4dd5f13dec0',
-        ),
+        Uri.parse('https://newsapi.org/v2/everything?q=$query&apiKey=$apiKey'),
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -157,16 +155,7 @@ class _SearchPageState extends State<MySearch> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () {
-                // final response = await http.get(
-                //   Uri.parse(
-                //     'https://newsapi.org/v2/everything?q=QUERY&apiKey=4d0e1016613247beb6dcf4dd5f13dec0',
-                //   ),
-                // );
-              },
-              icon: Icon(Icons.search),
-            ),
+            child: IconButton(onPressed: () {}, icon: Icon(Icons.search)),
           ),
         ],
       ),

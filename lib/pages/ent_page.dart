@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_4/pages/home_page.dart';
-//import 'package:flutter_application_4/pages/ent_page.dart';
+
 import 'package:flutter_application_4/pages/news_details.dart';
 import 'package:flutter_application_4/pages/profile_page.dart';
 import 'package:flutter_application_4/pages/saved_screen.dart';
 import 'package:flutter_application_4/pages/search_screen.dart';
 import 'package:flutter_application_4/pages/sports_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-//import 'package:flutter_application_4/pages/news_details.dart';
 
 class EntPage extends StatefulWidget {
   const EntPage({super.key});
@@ -27,8 +27,9 @@ class _EntPageState extends State<EntPage> {
   }
 
   Future<void> fetchArticles() async {
-    const url =
-        'https://newsapi.org/v2/top-headlines?category=entertainment&apiKey=4d0e1016613247beb6dcf4dd5f13dec0';
+    String? apiKey = dotenv.env['API_KEY'];
+    final url =
+        'https://newsapi.org/v2/top-headlines?category=entertainment&apiKey=$apiKey';
     final uri = Uri.parse(url);
     try {
       final response = await http.get(uri);
@@ -153,7 +154,6 @@ class _EntPageState extends State<EntPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    //'By: ${articles[index]['author']}',
                     articles[index]['author'] == null
                         ? 'By: Unknown'
                         : 'By: ${articles[index]['author']}',
@@ -221,14 +221,10 @@ class _EntPageState extends State<EntPage> {
             ),
             SizedBox(height: 50),
 
-            // listofArticles(0),
-            // SizedBox(height: 20),
-            // listofArticles(1),
             Expanded(
               child: ListView.builder(
                 itemCount: articles.length,
                 itemBuilder: (context, index) {
-                  // SizedBox(height: 40);
                   return listofArticles(index);
                 },
               ),
@@ -276,9 +272,3 @@ class _EntPageState extends State<EntPage> {
     );
   }
 }
-
-// Widget _buildButton(int index, String title){
-//   return GestureDetector(
-//     onTap: (){setState((){selected})},
-//   )
-// }
