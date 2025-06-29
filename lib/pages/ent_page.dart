@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_4/pages/ent_page.dart';
+import 'package:flutter_application_4/pages/home_page.dart';
+//import 'package:flutter_application_4/pages/ent_page.dart';
 import 'package:flutter_application_4/pages/news_details.dart';
 import 'package:flutter_application_4/pages/profile_page.dart';
 import 'package:flutter_application_4/pages/saved_screen.dart';
@@ -9,25 +10,25 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 //import 'package:flutter_application_4/pages/news_details.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class EntPage extends StatefulWidget {
+  const EntPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<EntPage> createState() => _EntPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _EntPageState extends State<EntPage> {
   List<Map<String, dynamic>> articles = [];
 
   @override
   void initState() {
     super.initState();
-    fetchArticles(); // Fetch articles when widget initializes
+    fetchArticles();
   }
 
   Future<void> fetchArticles() async {
     const url =
-        'https://newsapi.org/v2/top-headlines?category=technology&apiKey=4d0e1016613247beb6dcf4dd5f13dec0';
+        'https://newsapi.org/v2/top-headlines?category=entertainment&apiKey=4d0e1016613247beb6dcf4dd5f13dec0';
     final uri = Uri.parse(url);
     try {
       final response = await http.get(uri);
@@ -53,15 +54,15 @@ class _HomePageState extends State<HomePage> {
           selectedButton = index;
         });
 
-        if (index == 1) {
+        if (index == 0) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        } else if (index == 1) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => SportsPage()),
-          );
-        } else if (index == 2) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => EntPage()),
           );
         }
       },
@@ -152,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    // 'By: ${articles[index]['author']}',
+                    //'By: ${articles[index]['author']}',
                     articles[index]['author'] == null
                         ? 'By: Unknown'
                         : 'By: ${articles[index]['author']}',
@@ -172,7 +173,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  int selectedButton = 0;
+  int selectedButton = 2;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,7 +246,7 @@ class _HomePageState extends State<HomePage> {
             case 0:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(builder: (context) => EntPage()),
               );
               break;
             case 1:
