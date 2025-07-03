@@ -8,6 +8,7 @@ import 'package:flutter_application_4/pages/sports_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,8 +26,16 @@ class _HomePageState extends State<HomePage> {
     fetchArticles();
   }
 
+  String getApiKey() {
+    if (kIsWeb) {
+      return const String.fromEnvironment('API_KEY');
+    } else {
+      return dotenv.env['API_KEY']!;
+    }
+  }
+
   Future<void> fetchArticles() async {
-    String? apiKey = dotenv.env['API_KEY'];
+    String? apiKey = getApiKey();
     final url =
         'https://newsapi.org/v2/top-headlines?category=technology&apiKey=$apiKey';
     final uri = Uri.parse(url);
@@ -243,12 +252,6 @@ class _HomePageState extends State<HomePage> {
             selectedIndex = index;
           });
           switch (selectedIndex) {
-            case 0:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-              break;
             case 1:
               Navigator.push(
                 context,

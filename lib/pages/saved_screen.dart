@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_4/pages/home_page.dart';
 import 'package:flutter_application_4/pages/news_details.dart';
 import 'package:flutter_application_4/pages/search_screen.dart';
-import 'package:hive/hive.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MySaved extends StatefulWidget {
-  // final Map<String,dynamic>article;
   const MySaved({super.key});
   @override
   State<MySaved> createState() => _SavedPageState();
@@ -13,22 +14,28 @@ class MySaved extends StatefulWidget {
 
 class _SavedPageState extends State<MySaved> {
   int selectedIndex = 2;
-  late Box savedArticlesBox;
 
   List<Map<String, dynamic>> articles = [];
 
   @override
   void initState() {
     super.initState();
-    savedArticlesBox = Hive.box('saved_articles');
+
     loadSavedArticles();
   }
 
-  void loadSavedArticles() {
+  Future<void> loadSavedArticles() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('saved_articles')
+        .get();
+
     setState(() {
-      articles = savedArticlesBox.values
-          .map((e) => Map<String, dynamic>.from(e))
-          .toList();
+      articles = querySnapshot.docs.map((doc) => doc.data()).toList();
     });
   }
 
@@ -50,7 +57,6 @@ class _SavedPageState extends State<MySaved> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // SizedBox(height: 40),
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(20),
@@ -166,12 +172,6 @@ class _SavedPageState extends State<MySaved> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MySearch()),
-              );
-              break;
-            case 2:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MySaved()),
               );
               break;
           }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyDetails extends StatelessWidget {
   final int index;
@@ -10,7 +12,7 @@ class MyDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> article = articles[index];
-    final Box savedArticlesBox = Hive.box('saved_articles');
+    //final Box savedArticlesBox = Hive.box('saved_articles');
     final String uniqueKey = article['url'];
     return Scaffold(
       backgroundColor: Colors.white,
@@ -108,14 +110,28 @@ class MyDetails extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {
-                          if (!savedArticlesBox.containsKey(uniqueKey)) {
-                            savedArticlesBox.put(uniqueKey, article);
+                        onPressed: () async {
+                          final currentUserId =
+                              FirebaseAuth.instance.currentUser?.uid;
+                          if (currentUserId == null) return;
+                          final docRef = FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(currentUserId)
+                              .collection('saved_articles')
+                              .doc(uniqueKey);
+
+                          final doc = await docRef.get();
+                          if (!doc.exists) {
+                            await docRef.set(article);
+
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Article saved!')),
+                              SnackBar(
+                                content: Text('Article saved successfully'),
+                              ),
                             );
                           }
                         },
+
                         icon: Icon(
                           Icons.favorite,
                           color: Colors.pink,
@@ -134,13 +150,27 @@ class MyDetails extends StatelessWidget {
                       SizedBox(width: 70),
                       IconButton(
                         icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          if (savedArticlesBox.containsKey(uniqueKey)) {
-                            savedArticlesBox.delete(uniqueKey);
+                        onPressed: () async {
+                          final currentUserId =
+                              FirebaseAuth.instance.currentUser?.uid;
+                          if (currentUserId == null) return;
+                          final docRef = FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(currentUserId)
+                              .collection('saved_articles')
+                              .doc(uniqueKey);
+
+                          final doc = await docRef.get();
+                          if (doc.exists) {
+                            await docRef.delete();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Article removed from saved'),
+                                content: Text('Article deleted successfully'),
                               ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Article not found')),
                             );
                           }
                         },

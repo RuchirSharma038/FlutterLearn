@@ -9,6 +9,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:flutter_application_4/pages/sports_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+
 //import 'package:flutter_application_4/pages/news_details.dart';
 
 class SportsPage extends StatefulWidget {
@@ -27,8 +29,16 @@ class _SportsPageState extends State<SportsPage> {
     fetchArticles();
   }
 
+  String getApiKey() {
+    if (kIsWeb) {
+      return const String.fromEnvironment('API_KEY');
+    } else {
+      return dotenv.env['API_KEY']!;
+    }
+  }
+
   Future<void> fetchArticles() async {
-    String? apiKey = dotenv.env['API_KEY'];
+    String? apiKey = getApiKey();
     final url =
         'https://newsapi.org/v2/top-headlines?category=sports&apiKey=$apiKey';
     final uri = Uri.parse(url);

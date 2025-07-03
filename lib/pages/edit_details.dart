@@ -60,7 +60,7 @@ class _EditDetailsState extends State<EditDetails> {
         backgroundColor: Colors.white,
 
         title: Padding(
-          padding: EdgeInsetsGeometry.only(left: 16.0),
+          padding: EdgeInsets.only(left: 16.0),
           child: Text(
             'NewsApp',
             style: TextStyle(
@@ -107,6 +107,9 @@ class _EditDetailsState extends State<EditDetails> {
           ElevatedButton(
             onPressed: () async {
               await _saveData();
+
+              if (!mounted) return;
+
               Navigator.pop(context);
             },
             child: Text('Save Changes'),

@@ -19,6 +19,7 @@ class _SearchPageState extends State<MySearch> {
   int selectedIndex = 1;
 
   Future<void> fetchArticles() async {
+    if (!mounted) return;
     String? apiKey = dotenv.env['API_KEY'];
     if (query.isEmpty) {
       ScaffoldMessenger.of(
@@ -26,7 +27,7 @@ class _SearchPageState extends State<MySearch> {
       ).showSnackBar(SnackBar(content: Text("Query cannot be empty")));
       return;
     }
-
+    //if (context.mounted) {
     try {
       final response = await http.get(
         Uri.parse('https://newsapi.org/v2/everything?q=$query&apiKey=$apiKey'),
@@ -216,12 +217,7 @@ class _SearchPageState extends State<MySearch> {
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
               break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MySearch()),
-              );
-              break;
+
             case 2:
               Navigator.push(
                 context,
