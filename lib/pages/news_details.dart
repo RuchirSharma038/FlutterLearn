@@ -124,11 +124,13 @@ class MyDetails extends StatelessWidget {
                           if (!doc.exists) {
                             await docRef.set(article);
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Article saved successfully'),
-                              ),
-                            );
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Article saved successfully'),
+                                ),
+                              );
+                            }
                           }
                         },
 
@@ -163,15 +165,19 @@ class MyDetails extends StatelessWidget {
                           final doc = await docRef.get();
                           if (doc.exists) {
                             await docRef.delete();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Article deleted successfully'),
-                              ),
-                            );
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Article deleted successfully'),
+                                ),
+                              );
+                            }
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Article not found')),
-                            );
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Article not found')),
+                              );
+                            }
                           }
                         },
                       ),

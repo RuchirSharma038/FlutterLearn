@@ -15,31 +15,19 @@ class MySaved extends StatefulWidget {
 class _SavedPageState extends State<MySaved> {
   int selectedIndex = 2;
 
-  List<Map<String, dynamic>> articles = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    loadSavedArticles();
-  }
-
-  Future<void> loadSavedArticles() async {
+  Stream<List<Map<String, dynamic>>> loadSavedArticles() {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
+    if (uid == null) return const Stream.empty();
 
-    final querySnapshot = await FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .collection('saved_articles')
-        .get();
-
-    setState(() {
-      articles = querySnapshot.docs.map((doc) => doc.data()).toList();
-    });
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
-  Widget listofArticles(final int index) {
+  Widget listofArticles(final int index, List<Map<String, dynamic>> articles) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -146,15 +134,28 @@ class _SavedPageState extends State<MySaved> {
           ),
         ),
       ),
-      body: Expanded(
-        child: ListView.builder(
-          itemCount: articles.length,
-          itemBuilder: (context, index) {
-            // SizedBox(height: 40);
-            return listofArticles(index);
-          },
-        ),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: loadSavedArticles(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No Saved Articles'));
+          }
+          final articles = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: articles.length,
+            itemBuilder: (context, index) {
+              // SizedBox(height: 40);
+              return listofArticles(index, articles);
+            },
+          );
+        },
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: (int index) {

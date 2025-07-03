@@ -5,6 +5,7 @@ import 'package:flutter_application_4/pages/saved_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 class MySearch extends StatefulWidget {
   const MySearch({super.key});
@@ -17,10 +18,17 @@ class _SearchPageState extends State<MySearch> {
   String query = '';
   List<Map<String, dynamic>> articles = [];
   int selectedIndex = 1;
+  String getApiKey() {
+    if (kIsWeb) {
+      return const String.fromEnvironment('API_KEY');
+    } else {
+      return dotenv.env['API_KEY']!;
+    }
+  }
 
   Future<void> fetchArticles() async {
     if (!mounted) return;
-    String? apiKey = dotenv.env['API_KEY'];
+    String? apiKey = getApiKey();
     if (query.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -43,9 +51,11 @@ class _SearchPageState extends State<MySearch> {
         throw Exception('Failed to load articles');
       }
     } catch (error) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to fetch articles')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to fetch articles')));
+      }
     }
   }
 

@@ -108,9 +108,9 @@ class _EditDetailsState extends State<EditDetails> {
             onPressed: () async {
               await _saveData();
 
-              if (!mounted) return;
-
-              Navigator.pop(context);
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
             },
             child: Text('Save Changes'),
           ),
